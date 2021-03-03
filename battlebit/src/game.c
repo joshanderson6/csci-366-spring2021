@@ -53,13 +53,14 @@ unsigned long long int xy_to_bitval(int x, int y) {
     //
     // you will need to use bitwise operators and some math to produce the right
     // value.
-
     unsigned long long int_64 = 1ull;
-
-    unsigned int move = x + 8*y;
-
-    int_64 = (1ull << move);
-
+    if (x < 8 && x >= 0 && y < 8 && y >= 0) {
+        unsigned int move = x + 8 * y;
+        int_64 = (int_64 << move);
+    }
+    else {
+        int_64 = 0;
+    }
     return int_64;
 }
 
