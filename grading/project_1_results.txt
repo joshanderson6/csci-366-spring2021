@@ -26,27 +26,7 @@ string: Foo
 [ RUN      ] xy_to_bitval.good_values
 [       OK ] xy_to_bitval.good_values (0 ms)
 [ RUN      ] xy_to_bitval.bad_values
-/home/carson/Projects/msu/csci-366-spring2021/grading/scripts/repos/joshua_anderson/battlebit/googletest/game1.cpp:37: Failure
-Expected equality of these values:
-  xy_to_bitval(0, 8)
-    Which is: 1
-  0
-/home/carson/Projects/msu/csci-366-spring2021/grading/scripts/repos/joshua_anderson/battlebit/googletest/game1.cpp:38: Failure
-Expected equality of these values:
-  xy_to_bitval(8, 0)
-    Which is: 256
-  0
-/home/carson/Projects/msu/csci-366-spring2021/grading/scripts/repos/joshua_anderson/battlebit/googletest/game1.cpp:39: Failure
-Expected equality of these values:
-  xy_to_bitval(-1, 0)
-    Which is: 9223372036854775808
-  0
-/home/carson/Projects/msu/csci-366-spring2021/grading/scripts/repos/joshua_anderson/battlebit/googletest/game1.cpp:40: Failure
-Expected equality of these values:
-  xy_to_bitval(0, -1)
-    Which is: 72057594037927936
-  0
-[  FAILED  ] xy_to_bitval.bad_values (0 ms)
+[       OK ] xy_to_bitval.bad_values (0 ms)
 [----------] 2 tests from xy_to_bitval (0 ms total)
 
 [----------] 2 tests from add_ship_horizontal
@@ -54,14 +34,14 @@ Expected equality of these values:
 /home/carson/Projects/msu/csci-366-spring2021/grading/scripts/repos/joshua_anderson/battlebit/googletest/game1.cpp:51: Failure
 Expected equality of these values:
   add_ship_horizontal(player_info,1,8,0)
-    Which is: 1769277112
+    Which is: -1269213512
   1
 [  FAILED  ] add_ship_horizontal.empty_ship (0 ms)
 [ RUN      ] add_ship_horizontal.load_ship
 /home/carson/Projects/msu/csci-366-spring2021/grading/scripts/repos/joshua_anderson/battlebit/googletest/game1.cpp:61: Failure
 Expected equality of these values:
   add_ship_horizontal(player_info,0,0,5)
-    Which is: 1769277112
+    Which is: -1269213512
   1
 [  FAILED  ] add_ship_horizontal.load_ship (0 ms)
 [----------] 2 tests from add_ship_horizontal (0 ms total)
@@ -71,14 +51,14 @@ Expected equality of these values:
 /home/carson/Projects/msu/csci-366-spring2021/grading/scripts/repos/joshua_anderson/battlebit/googletest/game1.cpp:72: Failure
 Expected equality of these values:
   add_ship_vertical(player_info,1,8,0)
-    Which is: 1769277112
+    Which is: -1269213512
   1
 [  FAILED  ] add_ship_vertical.empty_ship (0 ms)
 [ RUN      ] add_ship_vertical.load_ship
 /home/carson/Projects/msu/csci-366-spring2021/grading/scripts/repos/joshua_anderson/battlebit/googletest/game1.cpp:82: Failure
 Expected equality of these values:
   add_ship_vertical(player_info,0,0,5)
-    Which is: 1769277112
+    Which is: -1269213512
   1
 [  FAILED  ] add_ship_vertical.load_ship (0 ms)
 [----------] 2 tests from add_ship_vertical (0 ms total)
@@ -88,30 +68,29 @@ Expected equality of these values:
 /home/carson/Projects/msu/csci-366-spring2021/grading/scripts/repos/joshua_anderson/battlebit/googletest/game1.cpp:93: Failure
 Expected equality of these values:
   game_load_board(gameon,0,__null)
-    Which is: 1769277104
+    Which is: -1269213520
   -1
 [  FAILED  ] game_load_board.empty_spec (0 ms)
 [ RUN      ] game_load_board.incomplete_spec
 /home/carson/Projects/msu/csci-366-spring2021/grading/scripts/repos/joshua_anderson/battlebit/googletest/game1.cpp:101: Failure
 Expected equality of these values:
   game_load_board(gameon,0,spec)
-    Which is: 1769277104
+    Which is: -1269213520
   -1
 [  FAILED  ] game_load_board.incomplete_spec (0 ms)
 [ RUN      ] game_load_board.valid_spec
 /home/carson/Projects/msu/csci-366-spring2021/grading/scripts/repos/joshua_anderson/battlebit/googletest/game1.cpp:131: Failure
 Expected equality of these values:
   game_load_board(gameon, 0, spec)
-    Which is: 1769277104
+    Which is: -1269213520
   1
 [  FAILED  ] game_load_board.valid_spec (0 ms)
 [----------] 3 tests from game_load_board (0 ms total)
 
 [----------] Global test environment tear-down
 [==========] 12 tests from 5 test suites ran. (0 ms total)
-[  PASSED  ] 4 tests.
-[  FAILED  ] 8 tests, listed below:
-[  FAILED  ] xy_to_bitval.bad_values
+[  PASSED  ] 5 tests.
+[  FAILED  ] 7 tests, listed below:
 [  FAILED  ] add_ship_horizontal.empty_ship
 [  FAILED  ] add_ship_horizontal.load_ship
 [  FAILED  ] add_ship_vertical.empty_ship
@@ -120,4 +99,4 @@ Expected equality of these values:
 [  FAILED  ] game_load_board.incomplete_spec
 [  FAILED  ] game_load_board.valid_spec
 
- 8 FAILED TESTS
+ 7 FAILED TESTS
