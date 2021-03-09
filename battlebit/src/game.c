@@ -68,28 +68,131 @@ struct game * game_get_current() {
     return GAME;
 }
 
+int valueinarray(char * val, char arr[]) {
+    for (int i = 0; i < (sizeof(arr)/sizeof(char)); i++) {
+        if(arr[i] == val) {
+            return 1;
+        }
+    }
+    return 0;
+}
+
 int game_load_board(struct game *game, int player, char * spec) {
     // Step 2 - implement this function.  Here you are taking a C
     // string that represents a layout of ships, then testing
     // to see if it is a valid layout (no off-the-board positions
     // and no overlapping ships)
     //
-
     // if it is valid, you should write the corresponding unsigned
     // long long value into the Game->players[player].ships data
     // slot and return 1
     //
     // if it is invalid, you should return -1
-}
+    int carrier = 5;
+    int battleship = 4;
+    int destroyer = 3;
+    int submarine = 3;
+    int patrolBoat = 2;
+    int length = (sizeof(spec)/sizeof(char));
 
+    int b = 0;
+
+    int return_value = -1;
+    char used_boats[5];
+
+    if (spec == NULL && length != 16) {
+        return return_value;
+    }
+
+    for (int i = 0; i < (sizeof(spec)/sizeof(char)); i++) {
+        char ship_type = spec[i];
+        int x = (int)spec[i + 1];
+        int y = (int)spec[i + 2];
+        i += 3;
+
+        if (ship_type == 'C' && valueinarray('C',used_boats) == 0) {
+            used_boats[b++] = 'C';
+            return_value = add_ship_horizontal(&game->players[player], x, y, carrier);
+        }
+        else if (ship_type == 'c' && valueinarray('c',used_boats) == 0) {
+            used_boats[b++] = 'c';
+            return_value = add_ship_vertical(&game->players[player], x, y, carrier);
+        }
+        else if (ship_type == 'B' && valueinarray('B',used_boats) == 0) {
+            used_boats[b++] = 'B';
+            return_value = add_ship_horizontal(&game->players[player], x, y, battleship);
+        }
+        else if (ship_type == 'b' && valueinarray('b',used_boats) == 0) {
+            used_boats[b++] = 'b';
+            return_value = add_ship_vertical(&game->players[player], x, y, battleship);
+        }
+        else if (ship_type == 'D'&& valueinarray('D',used_boats) == 0) {
+            used_boats[b++] = 'D';
+            return_value = add_ship_horizontal(&game->players[player], x, y, destroyer);
+        }
+        else if (ship_type == 'd'&& valueinarray('d',used_boats) == 0) {
+            used_boats[b++] = 'd';
+            return_value = add_ship_vertical(&game->players[player], x, y, destroyer);
+        }
+        else if (ship_type == 'S'&& valueinarray('S',used_boats) == 0) {
+            used_boats[b++] = 'S';
+            return_value = add_ship_horizontal(&game->players[player], x, y, submarine);
+        }
+        else if (ship_type == 's'&& valueinarray('s',used_boats) == 0) {
+            used_boats[b++] = 'S';
+            return_value = add_ship_vertical(&game->players[player], x, y, submarine);
+        }
+        else if (ship_type == 'P'&& valueinarray('P',used_boats) == 0) {
+            used_boats[b++] = 'P';
+            return_value = add_ship_horizontal(&game->players[player], x, y, patrolBoat);
+        }
+        else if (ship_type == 'p'&& valueinarray('p',used_boats) == 0) {
+            used_boats[b++] = 'P';
+            return_value = add_ship_vertical(&game->players[player], x, y, patrolBoat);
+        }
+    }
+    return return_value;
+}
 int add_ship_horizontal(player_info *player, int x, int y, int length) {
     // implement this as part of Step 2
     // returns 1 if the ship can be added, -1 if not
     // hint: this can be defined recursively
+    if (length <= 0) {
+        return 1;
+    }
+    if (x < 0 || y < 0 || x >= 8 || y >= 8 ) {
+        return -1;
+    }
+    unsigned long long bitmask = xy_to_bitval(x,y);
+    if(player->ships & bitmask) {
+        return -1;
+    }
+    else if (player->ships | bitmask) {
+        player->ships += bitmask;
+    }
+    x++;
+    length--;
+    add_ship_horizontal(player, x, y, length);
 }
 
 int add_ship_vertical(player_info *player, int x, int y, int length) {
     // implement this as part of Step 2
     // returns 1 if the ship can be added, -1 if not
     // hint: this can be defined recursively
+    if (length <= 0) {
+        return 1;
+    }
+    if (x < 0 || y < 0 || x >= 8 || y >= 8 ) {
+        return -1;
+    }
+    unsigned long long bitmask = xy_to_bitval(x,y);
+    if(player->ships & bitmask) {
+        return -1;
+    }
+    else if (player->ships | bitmask) {
+        player->ships += bitmask;
+    }
+    y++;
+    length--;
+    add_ship_vertical(player, x, y, length);
 }
