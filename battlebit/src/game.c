@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "game.h"
+#include <string.h>
 
 // STEP 9 - Synchronization: the GAME structure will be accessed by both players interacting
 // asynchronously with the server.  Therefore the data must be protected to avoid race conditions.
@@ -69,7 +70,7 @@ struct game * game_get_current() {
 }
 
 int valueinarray(char * val, char arr[]) {
-    for (int i = 0; i < (sizeof(arr)/sizeof(char)); i++) {
+    for (int i = 0; i < 5; i++) {
         if(arr[i] == val) {
             return 1;
         }
@@ -93,61 +94,63 @@ int game_load_board(struct game *game, int player, char * spec) {
     int destroyer = 3;
     int submarine = 3;
     int patrolBoat = 2;
-    int length = (sizeof(spec)/sizeof(char));
 
-    int b = 0;
+    int carrier_used = 0;
+    int battleship_used = 0;
+    int destroyer_used = 0;
+    int submarine_used = 0;
+    int patrolBoat_used = 0;
+    int length = strlen(spec);
 
     int return_value = -1;
-    char used_boats[5];
 
-    if (spec == NULL && length != 16) {
+    if (spec == NULL || length != 15) {
         return return_value;
     }
 
-    for (int i = 0; i < (sizeof(spec)/sizeof(char)); i++) {
+    for (int i = 0; i < length; i += 3) {
         char ship_type = spec[i];
         int x = (int)spec[i + 1];
         int y = (int)spec[i + 2];
-        i += 3;
 
-        if (ship_type == 'C' && valueinarray('C',used_boats) == 0) {
-            used_boats[b++] = 'C';
+        if (ship_type == 'C' && carrier_used == 0) {
+            carrier_used = 1;
             return_value = add_ship_horizontal(&game->players[player], x, y, carrier);
         }
-        else if (ship_type == 'c' && valueinarray('c',used_boats) == 0) {
-            used_boats[b++] = 'c';
+        else if (ship_type == 'c' && carrier_used == 0) {
+            carrier_used = 1;
             return_value = add_ship_vertical(&game->players[player], x, y, carrier);
         }
-        else if (ship_type == 'B' && valueinarray('B',used_boats) == 0) {
-            used_boats[b++] = 'B';
+        else if (ship_type == 'B' && battleship_used == 0) {
+            battleship_used = 1;
             return_value = add_ship_horizontal(&game->players[player], x, y, battleship);
         }
-        else if (ship_type == 'b' && valueinarray('b',used_boats) == 0) {
-            used_boats[b++] = 'b';
+        else if (ship_type == 'b' && battleship_used == 0) {
+            battleship_used = 1;
             return_value = add_ship_vertical(&game->players[player], x, y, battleship);
         }
-        else if (ship_type == 'D'&& valueinarray('D',used_boats) == 0) {
-            used_boats[b++] = 'D';
+        else if (ship_type == 'D' && destroyer_used == 0) {
+            destroyer_used = 1;
             return_value = add_ship_horizontal(&game->players[player], x, y, destroyer);
         }
-        else if (ship_type == 'd'&& valueinarray('d',used_boats) == 0) {
-            used_boats[b++] = 'd';
+        else if (ship_type == 'd' && destroyer_used == 0) {
+            destroyer_used = 1;
             return_value = add_ship_vertical(&game->players[player], x, y, destroyer);
         }
-        else if (ship_type == 'S'&& valueinarray('S',used_boats) == 0) {
-            used_boats[b++] = 'S';
+        else if (ship_type == 'S' && submarine_used == 0) {
+            submarine_used = 1;
             return_value = add_ship_horizontal(&game->players[player], x, y, submarine);
         }
-        else if (ship_type == 's'&& valueinarray('s',used_boats) == 0) {
-            used_boats[b++] = 'S';
+        else if (ship_type == 's' && submarine_used == 0) {
+            submarine_used = 1;
             return_value = add_ship_vertical(&game->players[player], x, y, submarine);
         }
-        else if (ship_type == 'P'&& valueinarray('P',used_boats) == 0) {
-            used_boats[b++] = 'P';
+        else if (ship_type == 'P' && patrolBoat_used == 0) {
+            patrolBoat_used = 1;
             return_value = add_ship_horizontal(&game->players[player], x, y, patrolBoat);
         }
-        else if (ship_type == 'p'&& valueinarray('p',used_boats) == 0) {
-            used_boats[b++] = 'P';
+        else if (ship_type == 'p' && patrolBoat_used == 0) {
+            patrolBoat_used = 1;
             return_value = add_ship_vertical(&game->players[player], x, y, patrolBoat);
         }
     }
