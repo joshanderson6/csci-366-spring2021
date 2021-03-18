@@ -49,18 +49,9 @@ string: Foo
 [ RUN      ] game_load_board.incomplete_spec
 [       OK ] game_load_board.incomplete_spec (0 ms)
 [ RUN      ] game_load_board.valid_spec
-/home/carson/Projects/msu/csci-366-spring2021/grading/scripts/repos/joshua_anderson/battlebit/googletest/game1.cpp:131: Failure
-Expected equality of these values:
-  game_load_board(gameon, 0, spec)
-    Which is: -1
-  1
-[  FAILED  ] game_load_board.valid_spec (0 ms)
+[       OK ] game_load_board.valid_spec (0 ms)
 [----------] 3 tests from game_load_board (0 ms total)
 
 [----------] Global test environment tear-down
 [==========] 12 tests from 5 test suites ran. (0 ms total)
-[  PASSED  ] 11 tests.
-[  FAILED  ] 1 test, listed below:
-[  FAILED  ] game_load_board.valid_spec
-
- 1 FAILED TEST
+[  PASSED  ] 12 tests.
