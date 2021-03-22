@@ -167,7 +167,6 @@ int add_ship_horizontal(player_info *player, int x, int y, int length) {
         return 1;
     }
     if (x < 0 || y < 0 || x >= 8 || y >= 8 ) {
-        printf("This is the issue");
         return -1;
     }
     unsigned long long bitmask = xy_to_bitval(x,y);

@@ -1,7 +1,3 @@
-;; TODO - implement counting up from 1 to 10
-;; in MIPS assembly, code only
-
-;; MIPS CODE =====================================
 .text
 li $t0, 1
 li $t1, 11
@@ -11,6 +7,7 @@ loop:
 	syscall
 	addi $t0, $t0, 1
 	blt $t0, $t1, loop
-
+	
 	li $v0, 10 # exit
 	syscall
+	
