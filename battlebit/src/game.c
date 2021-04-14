@@ -6,6 +6,7 @@
 #include <stdio.h>
 #include "game.h"
 #include <string.h>
+#include "repl.h"
 
 // STEP 9 - Synchronization: the GAME structure will be accessed by both players interacting
 // asynchronously with the server.  Therefore the data must be protected to avoid race conditions.
@@ -40,6 +41,53 @@ int game_fire(game *game, int player, int x, int y) {
     //
     //  If the opponents ships value is 0, they have no remaining ships, and you should set the game state to
     //  PLAYER_1_WINS or PLAYER_2_WINS depending on who won.
+
+    player_info *shooter_info = &game->players[player];
+    int other_player = 1 - player;
+    player_info *shootee_info = &game->players[other_player];
+
+    unsigned long long int bitmask = xy_to_bitval(x ,y);
+
+    if (player == 0) {
+        game->status = PLAYER_0_TURN;
+    }
+    else {
+        game->status = PLAYER_1_TURN;
+    }
+
+    if (shooter_info->shots ^ bitmask) {
+        shooter_info->shots += bitmask;
+    }
+
+    if (shooter_info->shots & shootee_info->ships) {
+        shootee_info->ships = (shootee_info->ships ^ bitmask);
+        shooter_info->hits += bitmask;
+        if (shootee_info->ships == 0) {
+            if (player == 0) {
+                game->status = PLAYER_0_WINS;
+            }
+            else {
+                game->status = PLAYER_1_WINS;
+            }
+        }
+        else {
+            if (player == 0) {
+                game->status = PLAYER_1_TURN;
+            } else {
+                game->status = PLAYER_0_TURN;
+            }
+        }
+        return 1;
+    }
+    else {
+        if (player == 0) {
+            game->status = PLAYER_1_TURN;
+        }
+        else {
+            game->status = PLAYER_0_TURN;
+        }
+        return 0;
+    }
 }
 
 unsigned long long int xy_to_bitval(int x, int y) {
@@ -94,6 +142,10 @@ int game_load_board(struct game *game, int player, char * spec) {
 
     int return_value = -1;
 
+    if (player == 1) {
+        game->status = PLAYER_0_TURN;
+    }
+
     if (spec == NULL) {
         return return_value;
     }
@@ -109,43 +161,43 @@ int game_load_board(struct game *game, int player, char * spec) {
         int x = spec[i + 1] - '0';
         int y = spec[i + 2] - '0';
 
-        if (ship_type == 'C' && carrier_used == 0 && x < 4) {
+        if (ship_type == 'C' && carrier_used == 0) {
             carrier_used = 1;
             return_value = add_ship_horizontal(&game->players[player], x, y, carrier);
         }
-        else if (ship_type == 'c' && carrier_used == 0 && y < 4) {
+        else if (ship_type == 'c' && carrier_used == 0) {
             carrier_used = 1;
             return_value = add_ship_vertical(&game->players[player], x, y, carrier);
         }
-        else if (ship_type == 'B' && battleship_used == 0 && x < 5) {
+        else if (ship_type == 'B' && battleship_used == 0) {
             battleship_used = 1;
             return_value = add_ship_horizontal(&game->players[player], x, y, battleship);
         }
-        else if (ship_type == 'b' && battleship_used == 0 && y < 5) {
+        else if (ship_type == 'b' && battleship_used == 0) {
             battleship_used = 1;
             return_value = add_ship_vertical(&game->players[player], x, y, battleship);
         }
-        else if (ship_type == 'D' && destroyer_used == 0 && x < 6) {
+        else if (ship_type == 'D' && destroyer_used == 0) {
             destroyer_used = 1;
             return_value = add_ship_horizontal(&game->players[player], x, y, destroyer);
         }
-        else if (ship_type == 'd' && destroyer_used == 0 && y < 6) {
+        else if (ship_type == 'd' && destroyer_used == 0) {
             destroyer_used = 1;
             return_value = add_ship_vertical(&game->players[player], x, y, destroyer);
         }
-        else if (ship_type == 'S' && submarine_used == 0 && x < 6) {
+        else if (ship_type == 'S' && submarine_used == 0) {
             submarine_used = 1;
             return_value = add_ship_horizontal(&game->players[player], x, y, submarine);
         }
-        else if (ship_type == 's' && submarine_used == 0 && x < 6) {
+        else if (ship_type == 's' && submarine_used == 0) {
             submarine_used = 1;
             return_value = add_ship_vertical(&game->players[player], x, y, submarine);
         }
-        else if (ship_type == 'P' && patrolBoat_used == 0 && x < 7) {
+        else if (ship_type == 'P' && patrolBoat_used == 0) {
             patrolBoat_used = 1;
             return_value = add_ship_horizontal(&game->players[player], x, y, patrolBoat);
         }
-        else if (ship_type == 'p' && patrolBoat_used == 0 && y < 7) {
+        else if (ship_type == 'p' && patrolBoat_used == 0) {
             patrolBoat_used = 1;
             return_value = add_ship_vertical(&game->players[player], x, y, patrolBoat);
         }
