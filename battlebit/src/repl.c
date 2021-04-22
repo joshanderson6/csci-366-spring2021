@@ -49,6 +49,7 @@ void repl_execute_command(struct char_buff * buffer) {
             printf("say <string> - Send the string to all players as part of a chat\n");
             printf("reset - reset the game\n");
             printf("server - start the server\n");
+            printf("shortcut - make player 1 have only one ship at 0 0\n");
             printf("exit - quit the server\n");
         } else if(strcmp(command, "server") == 0) {
             server_start();
@@ -83,6 +84,8 @@ void repl_execute_command(struct char_buff * buffer) {
                     printf("  Miss");
                 }
             }
+        } else if (strcmp(command, "shortcut") == 0) {
+            game_get_current()->players[1].ships = 1;
         } else {
             printf("Unknown Command: %s\n", command);
         }

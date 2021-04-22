@@ -41,19 +41,12 @@ int game_fire(game *game, int player, int x, int y) {
     //
     //  If the opponents ships value is 0, they have no remaining ships, and you should set the game state to
     //  PLAYER_1_WINS or PLAYER_2_WINS depending on who won.
-
+    game = game_get_current();
     player_info *shooter_info = &game->players[player];
     int other_player = 1 - player;
     player_info *shootee_info = &game->players[other_player];
 
     unsigned long long int bitmask = xy_to_bitval(x ,y);
-
-    if (player == 0) {
-        game->status = PLAYER_0_TURN;
-    }
-    else {
-        game->status = PLAYER_1_TURN;
-    }
 
     if (shooter_info->shots ^ bitmask) {
         shooter_info->shots += bitmask;
