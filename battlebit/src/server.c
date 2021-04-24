@@ -58,8 +58,8 @@ int handle_client_connect(int player) {
     cb_reset(output_buffer);
 
     int read_size;
-    pthread_mutex_lock(&lock);
     while ((read_size = recv(current_socket, buffer, 2000, 0)) > 0) {
+        pthread_mutex_unlock(&lock);
         cb_append(input_buffer,buffer);
         char* command = cb_tokenize(input_buffer, " \r\n");
         if (command) {
@@ -77,12 +77,12 @@ int handle_client_connect(int player) {
                 cb_append(output_buffer, "reset - reset the game\n");
                 cb_append(output_buffer, "server - start the server\n");
                 cb_append(output_buffer, "exit - quit the server\n");
-                cb_write(current_socket,output_buffer);
+                cb_write(current_socket, output_buffer);
                 cb_reset(output_buffer);
             } else if (strcmp(command, "server") == 0) {
                 server_start();
             } else if (strcmp(command, "show") == 0) {
-                struct char_buff * boardBuffer = cb_create(2000);
+                struct char_buff *boardBuffer = cb_create(2000);
                 repl_print_board(game_get_current(), player, boardBuffer);
                 cb_write(current_socket, boardBuffer);
             } else if (strcmp(command, "reset") == 0) {
@@ -94,14 +94,13 @@ int handle_client_connect(int player) {
                     cb_append(output_buffer, "Waiting on Player 1\n");
                     server_broadcast(output_buffer);
                     cb_reset(output_buffer);
-                }
-                else if (game_get_current()->status == PLAYER_0_TURN) {
+                } else if (game_get_current()->status == PLAYER_0_TURN) {
                     cb_append(output_buffer, "All Player Boards Loaded\n");
                     cb_append(output_buffer, "Player 0 Turn\n");
                     server_broadcast(output_buffer);
                     cb_reset(output_buffer);
                     cb_append(output_buffer, prompt);
-                    cb_write(SERVER->player_sockets[1-player],output_buffer);
+                    cb_write(SERVER->player_sockets[1 - player], output_buffer);
                     cb_reset(output_buffer);
                 }
             } else if (strcmp(command, "fire") == 0) {
@@ -109,18 +108,15 @@ int handle_client_connect(int player) {
                     cb_append(output_buffer, "Game Has Not Begun!\n");
                     cb_write(current_socket, output_buffer);
                     cb_reset(output_buffer);
-                }
-                else if (game_get_current()->status == PLAYER_0_TURN && player == 1) {
+                } else if (game_get_current()->status == PLAYER_0_TURN && player == 1) {
                     cb_append(output_buffer, "Player 0 Turn\n");
                     cb_write(current_socket, output_buffer);
                     cb_reset(output_buffer);
-                }
-                else if (game_get_current()->status == PLAYER_1_TURN && player == 0) {
+                } else if (game_get_current()->status == PLAYER_1_TURN && player == 0) {
                     cb_append(output_buffer, "Player 1 Turn\n");
                     cb_write(current_socket, output_buffer);
                     cb_reset(output_buffer);
-                }
-                else {
+                } else {
                     char *arg1 = cb_next_token(input_buffer);
                     char *arg2 = cb_next_token(input_buffer);
                     int x = atoi(arg1);
@@ -131,7 +127,7 @@ int handle_client_connect(int player) {
                         cb_append(output_buffer, " ");
                         cb_append_int(output_buffer, y);
                         cb_append(output_buffer, "\n");
-                        cb_write(current_socket,output_buffer);
+                        cb_write(current_socket, output_buffer);
                         cb_reset(output_buffer);
                     } else {
                         cb_append(output_buffer, "Player ");
@@ -143,8 +139,8 @@ int handle_client_connect(int player) {
 
                         int result = game_fire(game_get_current(), player, x, y);
                         if (result) {
-                            cb_append(output_buffer,"  HIT");
-                            if (game_get_current()->status == PLAYER_0_WINS || game_get_current()->status == PLAYER_1_WINS) {
+                            cb_append(output_buffer, "  HIT");
+                            if (game_get_current()->players[1 - player].ships == 0) {
                                 cb_append(output_buffer, " PLAYER ");
                                 cb_append_int(output_buffer, player);
                                 cb_append(output_buffer, " WINS!\n");
@@ -152,41 +148,29 @@ int handle_client_connect(int player) {
                                 cb_reset(output_buffer);
                                 exit(EXIT_SUCCESS);
                             }
-                            cb_append(output_buffer,"\n");
-                        } else if (game_get_current()->players[1-player].ships == 0) {
-                            cb_append(output_buffer,"  HIT");
-                            if (game_get_current()->status == PLAYER_0_WINS || game_get_current()->status == PLAYER_1_WINS) {
-                                cb_append(output_buffer, " PLAYER ");
-                                cb_append_int(output_buffer, player);
-                                cb_append(output_buffer, " WINS!\n");
-                                server_broadcast(output_buffer);
-                                cb_reset(output_buffer);
-                                exit(EXIT_SUCCESS);
-                            }
-                            cb_append(output_buffer,"\n");
+                            cb_append(output_buffer, "\n");
                         } else {
-                                cb_append(output_buffer, "  Miss\n");
-                            }
+                            cb_append(output_buffer, "  Miss\n");
                         }
-                        server_broadcast(output_buffer);
-                        cb_reset(output_buffer);
-                        cb_append(output_buffer, prompt);
-                        cb_write(SERVER->player_sockets[1-player],output_buffer);
-                        cb_reset(output_buffer);
-
                     }
+                    server_broadcast(output_buffer);
+                    cb_reset(output_buffer);
+                    cb_append(output_buffer, prompt);
+                    cb_write(SERVER->player_sockets[1 - player], output_buffer);
+                    cb_reset(output_buffer);
+
                 }
             } else if (strcmp(command, "say") == 0) {
-                char * arg1 = strtok(input_buffer->tokenization_save_pointer,"\r");
+                char *arg1 = strtok(input_buffer->tokenization_save_pointer, "\r");
                 cb_append(output_buffer, "\nPlayer ");
                 cb_append_int(output_buffer, player);
                 cb_append(output_buffer, " says: ");
                 cb_append(output_buffer, arg1);
                 cb_append(output_buffer, "\n");
-                cb_write(SERVER->player_sockets[1-player], output_buffer);
+                cb_write(SERVER->player_sockets[1 - player], output_buffer);
                 cb_reset(output_buffer);
                 cb_append(output_buffer, prompt);
-                cb_write(SERVER->player_sockets[1-player], output_buffer);
+                cb_write(SERVER->player_sockets[1 - player], output_buffer);
                 cb_reset(output_buffer);
 
             } else {
@@ -198,14 +182,14 @@ int handle_client_connect(int player) {
             }
 
             cb_append(output_buffer, prompt);
-            cb_write(current_socket,output_buffer);
+            cb_write(current_socket, output_buffer);
             cb_reset(output_buffer);
             cb_reset(input_buffer);
-            pthread_mutex_unlock(&lock);
-            sleep(1);
         }
-    return 0;
+        pthread_mutex_lock(&lock);
     }
+    return 0;
+}
 
 void server_broadcast(char_buff *msg) {
     // send message to all players
@@ -257,13 +241,12 @@ int run_server() {
         //Accept an incoming connection
         puts("Waiting for incoming connections...");
 
-
         struct sockaddr_in client;
         socklen_t size_from_connect;
         int client_socket_fd;
         int player = 0;
+        pthread_mutex_init(&lock, NULL);
         while ((client_socket_fd = accept(server_socket_fd, (struct sockaddr *) &client, &size_from_connect)) > 0) {
-            pthread_mutex_init(&lock, NULL);
             SERVER->player_sockets[player] = client_socket_fd;
             pthread_create(&SERVER->player_threads[player], NULL, (void *) handle_client_connect, player);
             player++;
